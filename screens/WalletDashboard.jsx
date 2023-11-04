@@ -45,10 +45,6 @@ const WalletDashboard = ({ navigation }) => {
   }, [account.address]);
 
   useEffect(() => {
-    console.log("PRICES: ", prices);
-  }, [prices]);
-
-  useEffect(() => {
     geckoGetPrice(balance).then((price) => {
       setPrices(price);
       setBalanceInINR(price["ethereum"].inr * balance);

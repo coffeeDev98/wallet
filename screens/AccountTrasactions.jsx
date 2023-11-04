@@ -56,7 +56,6 @@ const AccountTrasactions = ({ navigation }) => {
         setTransactions([
           ...response?.result.map((res) => {
             const gasInGwei = ethers.utils.formatUnits(res.gas, "gwei");
-            console.log("ACCOUNT_ADDR: ", account.address);
             return {
               status:
                 account.address.toLowerCase() === res.from_address.toLowerCase()
@@ -72,7 +71,7 @@ const AccountTrasactions = ({ navigation }) => {
         ]);
       })
       .catch((error) => {
-        console.log({ error });
+        console.log("ERR: ", error);
         setNetworkResponse({
           status: "error",
           message: JSON.stringify(error),

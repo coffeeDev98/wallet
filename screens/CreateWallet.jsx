@@ -65,13 +65,6 @@ const CreateWallet = ({ navigation }) => {
             style={globalStyles.primaryButton}
             title="Generate Account"
             onPress={() => {
-              // const start = performance.now();
-              // const w = ethers.Wallet.createRandom();
-              // const end = performance.now();
-              // console.log(
-              //   `Creating a Wallet took ${end - start} ms. => ${w.address}`
-              // );
-
               createAccount();
             }}
           />

@@ -108,7 +108,6 @@ const MakeTransactionScreen = ({ navigation }) => {
       } else {
         // Transaction failed
         console.log(`Failed to send ${receipt}`);
-        // Set the network response status to "error" and the message to the receipt
         setNetworkResponse({
           status: "error",
           message: JSON.stringify(receipt),

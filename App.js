@@ -34,16 +34,6 @@ export default function App() {
   const [account, setAccount] = useState(null);
   const [seedPhrase, setSeedPhrase] = useState("");
 
-  useEffect(() => {
-    console.log("ACCOUNT: ", account);
-    if (account?.address) {
-      setScreen("wallet");
-    }
-  }, [account]);
-  // useEffect(() => {
-  //   console.log("RECOVERY_SEED_PHRASE: ", seedPhrase);
-  // }, [seedPhrase]);
-
   return (
     <TouchableWithoutFeedback
       onPress={() => {

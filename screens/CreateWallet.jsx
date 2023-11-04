@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Keyboard,
   TextInput,
@@ -13,13 +13,11 @@ import Button from "../components/ui/Button";
 import { globalStyles } from "../stylesheets/global";
 import { GlobalContext } from "../context/global";
 
-const CreateWallet = () => {
+const CreateWallet = ({ navigation }) => {
   const [showRecoverInput, setShowRecoverInput] = useState(false);
 
   const { account, setAccount, seedPhrase, setSeedPhrase } =
     useContext(AccountContext);
-
-  const { screen, setScreen } = useContext(GlobalContext);
 
   const recoverAccount = useCallback(
     // recoverAccount could be used without recoveryPhrase as an arguement but then we would have to
@@ -48,6 +46,12 @@ const CreateWallet = () => {
     setAccount(result.account);
     setSeedPhrase(result.seedPhrase);
   };
+
+  useEffect(() => {
+    if (account?.address) {
+      navigation.navigate("wallet");
+    }
+  }, [account]);
 
   return (
     <TouchableWithoutFeedback

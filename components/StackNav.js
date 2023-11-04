@@ -1,19 +1,36 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import CreateWallet from "../screens/CreateWallet";
 import WalletDashboard from "../screens/WalletDashboard";
-import { useContext } from "react";
+import MakeTransactionScreen from "../screens/MakeTransactionScreen";
+import AccountTrasactions from "../screens/AccountTrasactions";
+import { useContext, useEffect } from "react";
 import { AccountContext } from "../context/account";
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 const StackNav = () => {
-  const { account } = useContext(AccountContext);
-
   return (
-    <Stack.Navigator screenOptions={{ headerTitle: false }}>
-      <Stack.Screen name="create" component={CreateWallet} />
-      <Stack.Screen name="wallet" component={WalletDashboard} />
-      {/* <Stack.Screen name="create" component={CreateWallet} /> */}
+    <Stack.Navigator>
+      <Stack.Screen
+        name="create"
+        options={{ headerShown: false }}
+        component={CreateWallet}
+      />
+      <Stack.Screen
+        name="wallet"
+        options={{ headerShown: false }}
+        component={WalletDashboard}
+      />
+      <Stack.Screen
+        name="send"
+        options={{ headerShown: false }}
+        component={MakeTransactionScreen}
+      />
+      <Stack.Screen
+        name="history"
+        options={{ headerShown: false }}
+        component={AccountTrasactions}
+      />
     </Stack.Navigator>
   );
 };

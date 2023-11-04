@@ -5,10 +5,12 @@ import { globalStyles } from "./global";
 export const makeTransactionStyles = StyleSheet.create({
   container: {
     width: "100%",
+    height: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     gap: 10,
+    backgroundColor: theme.colorPalette.grey[0],
   },
 
   input: {

@@ -4,9 +4,11 @@ import { theme } from "./constants";
 export const walletDashboardStyles = StyleSheet.create({
   container: {
     width: "100%",
+    height: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    backgroundColor: theme.colorPalette.grey[0],
   },
   card: {
     borderRadius: 12,

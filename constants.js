@@ -7,5 +7,5 @@ export const shorthands = {
   ethereum: "ETH",
   bitcoin: "BTC",
   binancecoin: "BNB",
-  ripple: "XRP",
+  // ripple: "XRP",
 };

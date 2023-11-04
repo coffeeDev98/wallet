@@ -7,7 +7,7 @@ export const geckoGetPrice = async () => {
     method: "GET",
     url,
     params: {
-      ids: "ethereum,bitcoin,binancecoin,ripple",
+      ids: "ethereum,bitcoin,binancecoin",
       vs_currencies: "inr",
     },
     headers: {

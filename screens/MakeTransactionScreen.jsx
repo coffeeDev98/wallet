@@ -12,20 +12,65 @@ import { sendToken } from "../utils/transactionUtils";
 import { globalStyles } from "../stylesheets/global";
 import { typography } from "../stylesheets/constants";
 import { GlobalContext } from "../context/global";
+import { ethers } from "ethers";
+import { CHAINS_CONFIG, goerli } from "../models/Chain";
+import { AccountContext } from "../context/account";
 
-const MakeTransactionScreen = () => {
+const estimateGas = async (addr, amt) => {
+  let gas = 0;
+  const chain = CHAINS_CONFIG[goerli.chainId];
+
+  // Create a provider using the Infura RPC URL for Goerli
+  const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
+
+  if (addr && amt) {
+    gas = await provider.estimateGas({
+      to: addr,
+      value: ethers.utils.parseEther(amt),
+    });
+
+    // Get the current gas price
+    const gasPrice = await provider.getGasPrice();
+    console.log("GAS_PRICE: ", gasPrice);
+
+    // Calculate the gas fee
+    const gasFeeInWei = gasPrice.mul(gas);
+    const gasFeeInETH = ethers.utils.formatEther(gasFeeInWei);
+    return gasFeeInETH;
+  }
+  return 0;
+};
+
+const MakeTransactionScreen = ({ navigation }) => {
   const [destinationAddress, setDestinationAddress] = useState("");
   const [amount, setAmount] = useState(0);
+  const [gas, setGas] = useState(0);
   const [networkResponse, setNetworkResponse] = useState({
     status: null,
     message: "",
   });
 
-  const { screen, setScreen } = useContext(GlobalContext);
+  const { account } = useContext(AccountContext);
 
   useEffect(() => {
     console.log("NETWORK_RESPONSE: ", networkResponse);
   }, [networkResponse]);
+
+  useEffect(() => {
+    console.log("ESTIMATED_GAS: ", gas);
+  }, [gas]);
+
+  //   useEffect(() => {
+  //     if (destinationAddress && amount) {
+  //       estimateGas(destinationAddress, amount)
+  //         .then((g) => {
+  //           setGas(g);
+  //         })
+  //         .catch((err) => {
+  //           console.log("GAS_ESTIMATE_ERR: ", err);
+  //         });
+  //     }
+  //   }, [destinationAddress, amount]);
 
   const handleDestinationAddressChange = (val) => {
     setDestinationAddress(val);
@@ -128,7 +173,7 @@ const MakeTransactionScreen = () => {
             }}
             title="Cancel"
             onPress={() => {
-              setScreen("wallet");
+              navigation.navigate("wallet");
             }}
           />
           <Button

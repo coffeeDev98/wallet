@@ -35,9 +35,13 @@ const Item = ({ icon, label, screen, active = false, onPress }) => {
       <MaterialIcons
         name={icon}
         size={24}
-        color={theme.colorPalette.grey[600]}
+        color={active ? "#fff" : theme.colorPalette.grey[600]}
       />
-      <Text style={globalStyles.primaryText}>{label}</Text>
+      <Text
+        style={active ? globalStyles.primaryText : globalStyles.secondaryText}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 };
@@ -54,9 +58,22 @@ const BottomNavbar = () => {
         label="Wallet"
         screen="wallet"
         onPress={onPress}
+        active={screen === "wallet"}
       />
-      <Item icon="search" label="Search" screen="search" onPress={onPress} />
-      <Item icon="history" label="History" screen="history" onPress={onPress} />
+      <Item
+        icon="search"
+        label="Search"
+        screen="search"
+        onPress={onPress}
+        active={screen === "search"}
+      />
+      <Item
+        icon="history"
+        label="History"
+        screen="history"
+        onPress={onPress}
+        active={screen === "history"}
+      />
     </View>
   );
 };

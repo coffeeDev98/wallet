@@ -19,18 +19,19 @@ import { globalStyles } from "../stylesheets/global";
 import { theme, typography } from "../stylesheets/constants";
 import { geckoGetPrice } from "../api/geckoAPI";
 import { Feather } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import WalletItem from "../components/ui/WalletItem";
 import { FlatList } from "react-native";
 import { shorthands } from "../constants";
 import { GlobalContext } from "../context/global";
+import { AccountContext } from "../context/account";
 
-const WalletDashboard = ({ account }) => {
-  const [balance, setBalance] = useState(account.balance);
+const WalletDashboard = ({ navigation }) => {
+  const { account } = useContext(AccountContext);
+  const [balance, setBalance] = useState(account?.balance || 0);
   const [balanceInINR, setBalanceInINR] = useState(0);
   const [prices, setPrices] = useState({});
-
-  const { screen, setScreen } = useContext(GlobalContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,20 +69,31 @@ const WalletDashboard = ({ account }) => {
             Total Protfolio Value
           </Text>
           <Text style={{ ...globalStyles.primaryText, ...typography.h1 }}>
-            {`\u20B9`} {balanceInINR}
+            {`\u20B9`} {balanceInINR.toFixed(3)}
           </Text>
           <Text style={{ ...globalStyles.secondaryText, ...typography.h3 }}>
             {balance} ETH
           </Text>
         </View>
-        <View>
+        <View style={{ display: "flex", flexDirection: "row", gap: 30 }}>
           <Pressable
             style={walletDashboardStyles.sendIcon}
             onPress={() => {
-              setScreen("send");
+              navigation.navigate("send");
             }}
           >
             <Feather name="arrow-up-right" size={24} color="white" />
+          </Pressable>
+          <Pressable
+            style={{
+              ...walletDashboardStyles.sendIcon,
+              backgroundColor: theme.colorPalette.primary[700],
+            }}
+            onPress={() => {
+              navigation.navigate("history");
+            }}
+          >
+            <MaterialIcons name="history" size={24} color="#fff" />
           </Pressable>
         </View>
       </View>
@@ -95,7 +107,7 @@ const WalletDashboard = ({ account }) => {
           shorthand="ETH"
         />
         <FlatList
-          data={Object.keys(prices)}
+          data={Object.keys(prices).filter((item) => item !== "ethereum")}
           renderItem={({ item }) => (
             <WalletItem
               name={`${item[0].toUpperCase()}${item.slice(1)}`}
@@ -144,24 +156,6 @@ const WalletDashboard = ({ account }) => {
 };
 
 export default WalletDashboard;
-
-const styles = StyleSheet.create({
-  container: {},
-  form: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 10,
-  },
-  formTextBox: {
-    width: "75%",
-    borderWidth: 1,
-    borderColor: "#777",
-    padding: 10,
-    borderRadius: 50,
-  },
-});
 
 /**
  * 

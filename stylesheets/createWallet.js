@@ -7,7 +7,7 @@ export const createWalletStyles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: 30,
+    // gap: 30,
     backgroundColor: theme.colorPalette.grey[0],
   },
   btnContainer: {
@@ -23,9 +23,6 @@ export const createWalletStyles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 10,
-    paddingTop: 25,
-    borderTopWidth: 1,
-    borderTopColor: theme.colorPalette.grey[700],
   },
   recoveryTextInput: {
     backgroundColor: theme.colorPalette.grey[0],

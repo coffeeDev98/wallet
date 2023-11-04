@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, StyleSheet, Pressable } from "react-native";
 
-export default function Button(props) {
+const Button = (props) => {
   const { onPress, title = "", style = {} } = props;
   return (
     <Pressable
@@ -11,7 +11,7 @@ export default function Button(props) {
       <Text style={{ ...defaultStyles.text, ...style?.text }}>{title}</Text>
     </Pressable>
   );
-}
+};
 
 const defaultStyles = StyleSheet.create({
   button: {
@@ -30,3 +30,5 @@ const defaultStyles = StyleSheet.create({
     color: "white",
   },
 });
+
+export default Button;

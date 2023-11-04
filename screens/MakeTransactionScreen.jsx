@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Keyboard,
   Text,
   TextInput,
@@ -11,34 +12,41 @@ import { makeTransactionStyles } from "../stylesheets/makeTransaction";
 import { sendToken } from "../utils/transactionUtils";
 import { globalStyles } from "../stylesheets/global";
 import { typography } from "../stylesheets/constants";
-import { GlobalContext } from "../context/global";
 import { ethers } from "ethers";
 import { CHAINS_CONFIG, goerli } from "../models/Chain";
 import { AccountContext } from "../context/account";
+import { geckoGetPrice } from "../api/geckoAPI";
+import ETH from "../assets/eth.svg";
 
 const estimateGas = async (addr, amt) => {
-  let gas = 0;
   const chain = CHAINS_CONFIG[goerli.chainId];
 
   // Create a provider using the Infura RPC URL for Goerli
   const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
 
-  if (addr && amt) {
-    gas = await provider.estimateGas({
-      to: addr,
-      value: ethers.utils.parseEther(amt),
+  // Create a transaction object
+  const tx = {
+    to: addr,
+    value: ethers.utils.parseEther(amt),
+  };
+
+  // Estimate the gas limit
+  return provider
+    .estimateGas(tx)
+    .then((estimatedGasLimit) => {
+      // Gas Price (in wei)
+      return provider.getGasPrice().then(async (gasPrice) => {
+        const gasFee = estimatedGasLimit.mul(gasPrice);
+        const gasFeeinETH = ethers.utils.formatEther(gasFee);
+        console.log("Estimated Gas Fee:", gasFeeinETH, "ETH");
+        const rate = await geckoGetPrice("ethereum");
+        console.log("Rate: ", rate);
+        return (gasFeeinETH * rate.ethereum.inr).toFixed(2);
+      });
+    })
+    .catch((error) => {
+      console.error("Error estimating gas:", error);
     });
-
-    // Get the current gas price
-    const gasPrice = await provider.getGasPrice();
-    console.log("GAS_PRICE: ", gasPrice);
-
-    // Calculate the gas fee
-    const gasFeeInWei = gasPrice.mul(gas);
-    const gasFeeInETH = ethers.utils.formatEther(gasFeeInWei);
-    return gasFeeInETH;
-  }
-  return 0;
 };
 
 const MakeTransactionScreen = ({ navigation }) => {
@@ -53,32 +61,31 @@ const MakeTransactionScreen = ({ navigation }) => {
   const { account } = useContext(AccountContext);
 
   useEffect(() => {
-    console.log("NETWORK_RESPONSE: ", networkResponse);
+    if (networkResponse.status === "complete") {
+      navigation.goBack();
+    }
   }, [networkResponse]);
 
   useEffect(() => {
-    console.log("ESTIMATED_GAS: ", gas);
-  }, [gas]);
-
-  //   useEffect(() => {
-  //     if (destinationAddress && amount) {
-  //       estimateGas(destinationAddress, amount)
-  //         .then((g) => {
-  //           setGas(g);
-  //         })
-  //         .catch((err) => {
-  //           console.log("GAS_ESTIMATE_ERR: ", err);
-  //         });
-  //     }
-  //   }, [destinationAddress, amount]);
+    if (destinationAddress && amount) {
+      estimateGas(destinationAddress, amount)
+        .then((g) => {
+          console.log("GAS FEE: ", g);
+          setGas(g);
+        })
+        .catch((err) => {
+          console.log("GAS_ESTIMATE_ERR: ", err);
+        });
+    }
+  }, [destinationAddress, amount]);
 
   const handleDestinationAddressChange = (val) => {
     setDestinationAddress(val);
   };
 
   const handleAmountChange = (val) => {
-    const regex = /^(0|[1-9]\d*)\.?\d{0,5}$/;
-    if (!regex.test(val)) return;
+    // const regex = /^(0|[1-9]\d*)\.?\d{0,5}$/;
+    // if (!regex.test(val)) return;
 
     setAmount(val);
   };
@@ -91,28 +98,30 @@ const MakeTransactionScreen = ({ navigation }) => {
     });
 
     try {
-      const { receipt } = await sendToken(
-        amount,
-        account.address,
-        destinationAddress,
-        account.privateKey
-      );
+      if (account?.address) {
+        const { receipt } = await sendToken(
+          amount,
+          account.address,
+          destinationAddress,
+          account.privateKey
+        );
 
-      if (receipt.status === 1) {
-        // Set the network response status to "complete" and the message to the transaction hash
-        setNetworkResponse({
-          status: "complete",
-          message: "Transfer complete!",
-        });
-        return receipt;
-      } else {
-        // Transaction failed
-        console.log(`Failed to send ${receipt}`);
-        setNetworkResponse({
-          status: "error",
-          message: JSON.stringify(receipt),
-        });
-        return { receipt };
+        if (receipt.status === 1) {
+          // Set the network response status to "complete" and the message to the transaction hash
+          setNetworkResponse({
+            status: "complete",
+            message: "Transfer complete!",
+          });
+          return receipt;
+        } else {
+          // Transaction failed
+          console.log(`Failed to send ${receipt}`);
+          setNetworkResponse({
+            status: "error",
+            message: JSON.stringify(receipt),
+          });
+          return { receipt };
+        }
       }
     } catch (error) {
       // An error occurred while sending the transaction
@@ -162,8 +171,23 @@ const MakeTransactionScreen = ({ navigation }) => {
           keyboardType="number-pad"
           value={`${amount}`}
           placeholder="Enter Amount..."
+          placeholderTextColor="#fff"
           onChangeText={(val) => val !== NaN && handleAmountChange(val)}
         />
+        <View
+          style={{
+            ...globalStyles.flexRow,
+            width: "100%",
+            justifyContent: "flex-start",
+          }}
+        >
+          <Text style={{ ...globalStyles.secondaryText, ...typography.text2 }}>
+            Estimated fee
+          </Text>
+          <Text style={{ ...globalStyles.primaryText }}>
+            {`\u20B9`} {gas}
+          </Text>
+        </View>
         <View style={makeTransactionStyles.buttonContainer}>
           <Button
             style={{
@@ -180,7 +204,13 @@ const MakeTransactionScreen = ({ navigation }) => {
               button: { ...globalStyles.primaryButton.button, width: "50%" },
               text: { ...globalStyles.primaryButton.text },
             }}
-            title="Transfer"
+            title={
+              networkResponse.status === "pending" ? (
+                <ActivityIndicator />
+              ) : (
+                "Confirm"
+              )
+            }
             onPress={transfer}
           />
         </View>

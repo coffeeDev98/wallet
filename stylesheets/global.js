@@ -19,6 +19,7 @@ export const globalStyles = StyleSheet.create({
       borderRadius: 8,
       borderWidth: 0.5,
       borderColor: "#fff",
+      backgroundColor: theme.colorPalette.grey[0],
     },
     text: {
       ...typography.global,
@@ -30,4 +31,15 @@ export const globalStyles = StyleSheet.create({
   secondaryText: {
     color: theme.colorPalette.grey[600],
   },
+  flex: {
+    display: "flex",
+  },
+  flexRow: (gap) => ({
+    display: "flex",
+    ...(gap && { gap }),
+  }),
+  flexCol: (gap) => ({
+    display: "flex",
+    ...(gap && { gap }),
+  }),
 });

@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -51,39 +51,41 @@ const AccountTrasactions = ({ navigation }) => {
       status: "pending",
       message: "",
     });
-    getTransactionsApi(account.address)
-      .then((response) => {
-        setTransactions([
-          ...response?.result.map((res) => {
-            const gasInGwei = ethers.utils.formatUnits(res.gas, "gwei");
-            return {
-              status:
-                account.address.toLowerCase() === res.from_address.toLowerCase()
-                  ? "Sent"
-                  : "Received",
-              amount: ethers.utils.formatEther(res.value),
-              from: res.from_address,
-              to: res.to_address,
-              gas: gasInGwei,
-              timestamp: new Date(res.block_timestamp).toLocaleString(),
-            };
-          }),
-        ]);
-      })
-      .catch((error) => {
-        console.log("ERR: ", error);
-        setNetworkResponse({
-          status: "error",
-          message: JSON.stringify(error),
+    account?.address &&
+      getTransactionsApi(account.address)
+        .then((response) => {
+          setTransactions([
+            ...response?.result.map((res) => {
+              const gasInGwei = ethers.utils.formatUnits(res.gas, "gwei");
+              return {
+                status:
+                  account?.address.toLowerCase() ===
+                  res.from_address.toLowerCase()
+                    ? "Sent"
+                    : "Received",
+                amount: ethers.utils.formatEther(res.value),
+                from: res.from_address,
+                to: res.to_address,
+                gas: gasInGwei,
+                timestamp: new Date(res.block_timestamp).toLocaleString(),
+              };
+            }),
+          ]);
+        })
+        .catch((error) => {
+          console.log("ERR: ", error);
+          setNetworkResponse({
+            status: "error",
+            message: JSON.stringify(error),
+          });
+        })
+        .finally(() => {
+          setNetworkResponse({
+            status: "complete",
+            message: "",
+          });
         });
-      })
-      .finally(() => {
-        setNetworkResponse({
-          status: "complete",
-          message: "",
-        });
-      });
-  }, [account.address]);
+  }, [account?.address]);
 
   useEffect(() => {
     getTransactions();
@@ -119,7 +121,7 @@ const AccountTrasactions = ({ navigation }) => {
         </Text>
       </View>
 
-      {transactions.length > 0 && (
+      {transactions.length > 0 ? (
         <View>
           <FlatList
             data={transactions}
@@ -133,6 +135,12 @@ const AccountTrasactions = ({ navigation }) => {
               );
             }}
           />
+        </View>
+      ) : (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" />
         </View>
       )}
     </View>

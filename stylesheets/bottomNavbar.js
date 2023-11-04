@@ -4,8 +4,8 @@ import { theme } from "./constants";
 export const bottomNavbarStyles = StyleSheet.create({
   container: {
     height: 52,
-    position: "absolute",
-    bottom: 20,
+    // position: "absolute",
+    // bottom: 20,
     alignSelf: "center",
     display: "flex",
     flexDirection: "row",

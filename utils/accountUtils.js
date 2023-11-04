@@ -1,6 +1,6 @@
 import { Wallet } from "ethers";
 
-export const generateAccount = (seedPhrase = "", index = 0) => {
+export const generateAccount = async (seedPhrase = "", index = 0) => {
   let wallet;
 
   // generate a random if the seed phrase is not provided
@@ -18,12 +18,12 @@ export const generateAccount = (seedPhrase = "", index = 0) => {
   return { account, seedPhrase: seedPhrase.includes(" ") ? seedPhrase : "" };
 };
 
-export function shortenAddress(str, numChars = 4) {
+export const shortenAddress = (str, numChars = 4) => {
   return `${str.substring(0, numChars)}...${str.substring(
     str.length - numChars
   )}`;
-}
+};
 
-export function toFixedIfNecessary(value, decimalPlaces = 2) {
+export const toFixedIfNecessary = (value, decimalPlaces = 2) => {
   return +parseFloat(value).toFixed(decimalPlaces);
-}
+};

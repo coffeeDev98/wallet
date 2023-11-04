@@ -1,16 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { walletDashboardStyles } from "../../stylesheets/walletDashboard";
 import { globalStyles } from "../../stylesheets/global";
 import { typography } from "../../stylesheets/constants";
-import { GlobalContext } from "../../context/global";
-import { icons } from "../../constants";
 import ETH from "../../assets/eth.svg";
 import BTC from "../../assets/btc.svg";
 import BNB from "../../assets/bnb.svg";
+import { useRoute } from "@react-navigation/native";
+
 const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
-  const { screen } = useContext(GlobalContext);
+  const route = useRoute();
   return (
     <View style={walletDashboardStyles.walletItem}>
       <View
@@ -27,15 +27,14 @@ const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
         {/* {icons[name] || (
           <MaterialCommunityIcons name="ethereum" size={36} color="white" />
         )} */}
-        <View style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+        <View style={globalStyles.flexCol(5)}>
           <View
             style={{
-              display: "flex",
-              flexDirection: "row",
+              ...globalStyles.flexRow(),
               alignItems: "center",
             }}
           >
-            {screen === "history" && (
+            {route.name === "history" && (
               <MaterialCommunityIcons
                 name={
                   name.toLowerCase() === "sent"
@@ -49,7 +48,7 @@ const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
             <Text
               style={{
                 ...globalStyles[
-                  screen === "wallet" ? "primaryText" : "secondaryText"
+                  route.name === "wallet" ? "primaryText" : "secondaryText"
                 ],
                 ...typography.h6,
               }}
@@ -60,7 +59,7 @@ const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
           <Text
             style={{
               ...globalStyles[
-                screen === "wallet" ? "secondaryText" : "primaryText"
+                route.name === "wallet" ? "secondaryText" : "primaryText"
               ],
             }}
           >
@@ -78,9 +77,9 @@ const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
         }}
       >
         <Text style={{ ...globalStyles.primaryText, ...typography.h6 }}>
-          {balance} {screen === "history" && shorthand}
+          {balance} {route.name === "history" && shorthand}
         </Text>
-        {screen === "wallet" && (
+        {route.name === "wallet" && (
           <Text style={{ ...globalStyles.secondaryText }}>
             1 {shorthand} &asymp; {`\u20B9`} {exchangeRate}
           </Text>

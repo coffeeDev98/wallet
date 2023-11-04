@@ -1,34 +1,21 @@
 import { ethers } from "ethers";
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Button,
-  Linking,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { toFixedIfNecessary } from "../utils/accountUtils";
 import { goerli } from "../models/Chain";
-import { sendToken } from "../utils/transactionUtils";
-import Hr from "../components/ui/Hr";
-import AccountTrasactions from "./AccountTrasactions";
 import { walletDashboardStyles } from "../stylesheets/walletDashboard";
 import { globalStyles } from "../stylesheets/global";
 import { theme, typography } from "../stylesheets/constants";
 import { geckoGetPrice } from "../api/geckoAPI";
 import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import WalletItem from "../components/ui/WalletItem";
 import { FlatList } from "react-native";
 import { shorthands } from "../constants";
-import { GlobalContext } from "../context/global";
 import { AccountContext } from "../context/account";
 
 const WalletDashboard = ({ navigation }) => {
-  const { account } = useContext(AccountContext);
+  const { account, setAccount, setSeedPhrase } = useContext(AccountContext);
   const [balance, setBalance] = useState(account?.balance || 0);
   const [balanceInINR, setBalanceInINR] = useState(0);
   const [prices, setPrices] = useState({});
@@ -41,18 +28,49 @@ const WalletDashboard = ({ navigation }) => {
         String(toFixedIfNecessary(ethers.utils.formatEther(accountBalance)))
       );
     };
-    fetchData();
-  }, [account.address]);
+    account?.address && fetchData();
+  }, [account?.address]);
 
   useEffect(() => {
-    geckoGetPrice(balance).then((price) => {
+    geckoGetPrice().then((price) => {
       setPrices(price);
-      setBalanceInINR(price["ethereum"].inr * balance);
+      setBalanceInINR(price["ethereum"]?.inr * balance);
     });
   }, [balance]);
 
   return (
     <View style={walletDashboardStyles.container}>
+      <View
+        style={{
+          marginBottom: 20,
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Text
+          style={{
+            ...globalStyles.primaryText,
+            ...typography.h3,
+            ...typography.weight.bold,
+          }}
+        >
+          Hi There!
+        </Text>
+        <MaterialIcons
+          name="logout"
+          size={24}
+          color="#fff"
+          style={{ transform: [{ rotate: "180deg" }] }}
+          onPress={() => {
+            setAccount(null);
+            setSeedPhrase("");
+            navigation.navigate("create");
+          }}
+        />
+      </View>
       <View style={walletDashboardStyles.card}>
         <View style={walletDashboardStyles.balanceInfo}>
           <Text
@@ -73,14 +91,6 @@ const WalletDashboard = ({ navigation }) => {
         </View>
         <View style={{ display: "flex", flexDirection: "row", gap: 30 }}>
           <Pressable
-            style={walletDashboardStyles.sendIcon}
-            onPress={() => {
-              navigation.navigate("send");
-            }}
-          >
-            <Feather name="arrow-up-right" size={24} color="white" />
-          </Pressable>
-          <Pressable
             style={{
               ...walletDashboardStyles.sendIcon,
               backgroundColor: theme.colorPalette.primary[700],
@@ -91,10 +101,17 @@ const WalletDashboard = ({ navigation }) => {
           >
             <MaterialIcons name="history" size={24} color="#fff" />
           </Pressable>
+          <Pressable
+            style={walletDashboardStyles.sendIcon}
+            onPress={() => {
+              navigation.navigate("send");
+            }}
+          >
+            <Feather name="arrow-up-right" size={24} color="white" />
+          </Pressable>
         </View>
       </View>
 
-      {/* <Hr /> */}
       <View style={walletDashboardStyles.walletsSection}>
         <WalletItem
           name="Ethereum"

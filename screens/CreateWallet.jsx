@@ -1,6 +1,7 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Keyboard,
+  Text,
   TextInput,
   TouchableWithoutFeedback,
   View,
@@ -8,47 +9,56 @@ import {
 import { generateAccount } from "../utils/accountUtils";
 import { AccountContext } from "../context/account";
 import { createWalletStyles } from "../stylesheets/createWallet";
-import { theme } from "../stylesheets/constants";
 import Button from "../components/ui/Button";
 import { globalStyles } from "../stylesheets/global";
-import { GlobalContext } from "../context/global";
+import { ActivityIndicator } from "react-native";
+import { typography } from "../stylesheets/constants";
 
 const CreateWallet = ({ navigation }) => {
   const [showRecoverInput, setShowRecoverInput] = useState(false);
+  const [loader, setLoader] = useState({ show: false });
 
+  const [networkResponse, setNetworkResponse] = useState({
+    status: null,
+    message: "",
+  });
+
+  useEffect(() => {
+    console.log("NETWORK_RESPONSE: ", networkResponse);
+  }, [networkResponse]);
   const { account, setAccount, seedPhrase, setSeedPhrase } =
     useContext(AccountContext);
 
-  const recoverAccount = useCallback(
-    // recoverAccount could be used without recoveryPhrase as an arguement but then we would have to
-    // put it in a deps array.
-    async (recoveryPhrase) => {
-      // Call the generateAccount function with no arguments
-      // Call the generateAccount function and pass it 0 and the current seedphrase
-      const result = await generateAccount(recoveryPhrase);
-
-      // Update the account state with the newly recovered account
-      setAccount(result.account);
-
-      // if (localStorage.getItem(recoveryPhraseKeyName) !== recoveryPhrase) {
-      //   localStorage.setItem(recoveryPhraseKeyName, recoveryPhrase);
-      // }
-      setShowRecoverInput(false);
-    },
-    []
-  );
+  const recoverAccount = async () => {
+    setLoader({ show: true });
+    setNetworkResponse({
+      status: "pending",
+      message: "",
+    });
+    const result = await generateAccount(seedPhrase);
+    setAccount(result.account);
+    // setShowRecoverInput(false);
+  };
 
   const createAccount = async () => {
-    // Call the generateAccount function with no arguments
+    setLoader({ show: true });
+    setNetworkResponse({
+      status: "pending",
+      message: "",
+    });
     const result = await generateAccount();
-
-    // Update the account state with the newly created account
     setAccount(result.account);
     setSeedPhrase(result.seedPhrase);
   };
 
   useEffect(() => {
     if (account?.address) {
+      setLoader({ show: false });
+      setNetworkResponse({
+        status: "complete",
+        message: "Transfer complete!",
+      });
+      setShowRecoverInput(false);
       navigation.navigate("wallet");
     }
   }, [account]);
@@ -60,23 +70,31 @@ const CreateWallet = ({ navigation }) => {
       }}
     >
       <View style={createWalletStyles.container}>
-        <View style={createWalletStyles.btnContainer}>
-          <Button
-            style={globalStyles.primaryButton}
-            title="Generate Account"
-            onPress={() => {
-              createAccount();
+        <View style={{ width: "75%" }}>
+          <Text
+            style={{
+              ...typography.weight.bold,
+              ...globalStyles.primaryText,
+              fontSize: 72,
             }}
-          />
-          <Button
-            style={globalStyles.secondaryButton}
-            title="Recover Account"
-            onPress={() => {
-              setShowRecoverInput((prev) => !prev);
-            }}
-          />
+          >
+            Wallet Setup
+          </Text>
         </View>
-        {showRecoverInput && (
+        <View style={{ width: "75%", marginBottom: 72 }}>
+          <Text
+            style={{
+              ...typography.h5,
+              ...typography.weight.medium,
+              ...globalStyles.secondaryText,
+              maxWidth: "55%",
+            }}
+          >
+            Import an existing wallet or create a new one
+          </Text>
+        </View>
+
+        {showRecoverInput ? (
           <View style={createWalletStyles.recoveryInputContainer}>
             <TextInput
               style={createWalletStyles.recoveryTextInput}
@@ -89,11 +107,37 @@ const CreateWallet = ({ navigation }) => {
             />
             <Button
               style={globalStyles.primaryButton}
-              title="Submit"
+              title={
+                networkResponse.status === "pending" ? (
+                  <ActivityIndicator />
+                ) : (
+                  "Submit"
+                )
+              }
+              onPress={recoverAccount}
+            />
+            <Button
+              style={globalStyles.secondaryButton}
+              title="Back"
               onPress={() => {
-                recoverAccount(seedPhrase).then(() => {
-                  setShowRecoverInput(false);
-                });
+                setShowRecoverInput(false);
+              }}
+            />
+          </View>
+        ) : (
+          <View style={createWalletStyles.btnContainer}>
+            <Button
+              style={globalStyles.primaryButton}
+              title="Generate Account"
+              onPress={() => {
+                createAccount();
+              }}
+            />
+            <Button
+              style={globalStyles.secondaryButton}
+              title="Import Using Seed Phare"
+              onPress={() => {
+                setShowRecoverInput((prev) => !prev);
               }}
             />
           </View>

@@ -2,11 +2,17 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Keyboard,
   Pressable,
   Text,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { TRANSACTION_API_KEY, TRANSACTION_API_URL } from "../constants";
+import {
+  TRANSACTION_API_KEY,
+  TRANSACTION_API_URL,
+  defaultNetworkVal,
+} from "../constants";
 import { goerli } from "../models/Chain";
 import axios from "axios";
 import { ethers } from "ethers";
@@ -36,10 +42,7 @@ const getTransactionsApi = async (address) => {
 const AccountTrasactions = ({ navigation }) => {
   const [transactions, setTransactions] = useState();
 
-  const [networkResponse, setNetworkResponse] = useState({
-    status: null,
-    message: "",
-  });
+  const [networkResponse, setNetworkResponse] = useState(defaultNetworkVal);
   const { account } = useContext(AccountContext);
 
   const getTransactions = useCallback(() => {
@@ -87,61 +90,67 @@ const AccountTrasactions = ({ navigation }) => {
     getTransactions();
   }, [getTransactions]);
   return (
-    <View style={accountTransactionsStyles.container}>
-      <View
-        style={globalStyles.flexRow({
-          width: "100%",
-          justify: "flex-start",
-          align: "center",
-          gap: 24,
-          marginBottom: 10,
-        })}
-      >
-        <Pressable
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          <MaterialIcons name="arrow-back" size={24} color="#fff" />
-        </Pressable>
-        <Text
-          style={{
-            ...globalStyles.primaryText,
-            ...typography.h3,
-            ...typography.weight.bold,
-          }}
-        >
-          Transactions
-        </Text>
-      </View>
-
-      {transactions?.length >= 0 ? (
-        <View>
-          <FlatList
-            data={transactions}
-            renderItem={({ item }) => {
-              return (
-                <WalletItem
-                  name={item?.status}
-                  balance={item?.amount}
-                  shorthand="ETH"
-                />
-              );
-            }}
-          />
-        </View>
-      ) : (
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={accountTransactionsStyles.container}>
         <View
-          style={globalStyles.flex({
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
+          style={globalStyles.flexRow({
+            width: "100%",
+            justify: "flex-start",
+            align: "center",
+            gap: 24,
+            marginBottom: 10,
           })}
         >
-          <ActivityIndicator size="large" />
+          <Pressable
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <MaterialIcons name="arrow-back" size={24} color="#fff" />
+          </Pressable>
+          <Text
+            style={{
+              ...globalStyles.primaryText,
+              ...typography.h3,
+              ...typography.weight.bold,
+            }}
+          >
+            Transactions
+          </Text>
         </View>
-      )}
-    </View>
+
+        {transactions?.length >= 0 ? (
+          <View>
+            <FlatList
+              data={transactions}
+              renderItem={({ item }) => {
+                return (
+                  <WalletItem
+                    name={item?.status}
+                    balance={item?.amount}
+                    shorthand="ETH"
+                  />
+                );
+              }}
+            />
+          </View>
+        ) : (
+          <View
+            style={globalStyles.flex({
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            })}
+          >
+            <ActivityIndicator size="large" />
+          </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

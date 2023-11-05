@@ -13,11 +13,8 @@ import Button from "../components/ui/Button";
 import { globalStyles } from "../stylesheets/global";
 import { ActivityIndicator } from "react-native";
 import { theme, typography } from "../stylesheets/constants";
+import { defaultNetworkVal } from "../constants";
 
-const defaultNetworkVal = {
-  status: null,
-  message: "",
-};
 const CreateWallet = ({ navigation }) => {
   const [showRecoverInput, setShowRecoverInput] = useState(false);
   const [networkResponse, setNetworkResponse] = useState(defaultNetworkVal);
@@ -133,6 +130,7 @@ const CreateWallet = ({ navigation }) => {
               style={globalStyles.secondaryButton}
               title="Back"
               onPress={() => {
+                setNetworkResponse(defaultNetworkVal);
                 setShowRecoverInput(false);
               }}
             />

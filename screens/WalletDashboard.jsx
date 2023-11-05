@@ -1,6 +1,12 @@
 import { ethers } from "ethers";
 import React, { useContext, useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import {
+  Keyboard,
+  Pressable,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { toFixedIfNecessary } from "../utils/accountUtils";
 import { goerli } from "../models/Chain";
 import { walletDashboardStyles } from "../stylesheets/walletDashboard";
@@ -39,97 +45,103 @@ const WalletDashboard = ({ navigation }) => {
   }, [balance]);
 
   return (
-    <View style={walletDashboardStyles.container}>
-      <View
-        style={globalStyles.flexRow({
-          width: "100%",
-          justify: "space-between",
-          align: "center",
-          marginBottom: 20,
-        })}
-      >
-        <Text
-          style={{
-            ...globalStyles.primaryText,
-            ...typography.h3,
-            ...typography.weight.bold,
-          }}
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={walletDashboardStyles.container}>
+        <View
+          style={globalStyles.flexRow({
+            width: "100%",
+            justify: "space-between",
+            align: "center",
+            marginBottom: 20,
+          })}
         >
-          Hi There!
-        </Text>
-        <MaterialIcons
-          name="logout"
-          size={24}
-          color="#fff"
-          style={{ transform: [{ rotate: "180deg" }] }}
-          onPress={() => {
-            setAccount(null);
-            setSeedPhrase("");
-            navigation.navigate("create");
-          }}
-        />
-      </View>
-      <View style={walletDashboardStyles.card}>
-        <View style={walletDashboardStyles.balanceInfo}>
           <Text
             style={{
               ...globalStyles.primaryText,
-              color: theme.colorPalette.grey[400],
-              marginBottom: 10,
+              ...typography.h3,
+              ...typography.weight.bold,
             }}
           >
-            Total Protfolio Value
+            Hi There!
           </Text>
-          <Text style={{ ...globalStyles.primaryText, ...typography.h1 }}>
-            {`\u20B9`} {balanceInINR.toFixed(3)}
-          </Text>
-          <Text style={{ ...globalStyles.secondaryText, ...typography.h3 }}>
-            {balance} ETH
-          </Text>
-        </View>
-        <View style={globalStyles.flexRow({ gap: 30 })}>
-          <Pressable
-            style={{
-              ...walletDashboardStyles.sendIcon,
-              backgroundColor: theme.colorPalette.primary[700],
-            }}
+          <MaterialIcons
+            name="logout"
+            size={24}
+            color="#fff"
+            style={{ transform: [{ rotate: "180deg" }] }}
             onPress={() => {
-              navigation.navigate("history");
+              setAccount(null);
+              setSeedPhrase("");
+              navigation.navigate("create");
             }}
-          >
-            <MaterialIcons name="history" size={24} color="#fff" />
-          </Pressable>
-          <Pressable
-            style={walletDashboardStyles.sendIcon}
-            onPress={() => {
-              navigation.navigate("send");
-            }}
-          >
-            <Feather name="arrow-up-right" size={24} color="white" />
-          </Pressable>
+          />
         </View>
-      </View>
+        <View style={walletDashboardStyles.card}>
+          <View style={walletDashboardStyles.balanceInfo}>
+            <Text
+              style={{
+                ...globalStyles.primaryText,
+                color: theme.colorPalette.grey[400],
+                marginBottom: 10,
+              }}
+            >
+              Total Protfolio Value
+            </Text>
+            <Text style={{ ...globalStyles.primaryText, ...typography.h1 }}>
+              {`\u20B9`} {balanceInINR.toFixed(3)}
+            </Text>
+            <Text style={{ ...globalStyles.secondaryText, ...typography.h3 }}>
+              {balance} ETH
+            </Text>
+          </View>
+          <View style={globalStyles.flexRow({ gap: 30 })}>
+            <Pressable
+              style={{
+                ...walletDashboardStyles.sendIcon,
+                backgroundColor: theme.colorPalette.primary[700],
+              }}
+              onPress={() => {
+                navigation.navigate("history");
+              }}
+            >
+              <MaterialIcons name="history" size={24} color="#fff" />
+            </Pressable>
+            <Pressable
+              style={walletDashboardStyles.sendIcon}
+              onPress={() => {
+                navigation.navigate("send");
+              }}
+            >
+              <Feather name="arrow-up-right" size={24} color="white" />
+            </Pressable>
+          </View>
+        </View>
 
-      <View style={walletDashboardStyles.walletsSection}>
-        <WalletItem
-          name="Ethereum"
-          balance={balance}
-          exchangeRate={prices?.ethereum?.inr}
-          shorthand="ETH"
-        />
-        <FlatList
-          data={Object.keys(prices).filter((item) => item !== "ethereum")}
-          renderItem={({ item }) => (
-            <WalletItem
-              name={`${item[0].toUpperCase()}${item.slice(1)}`}
-              balance={0}
-              exchangeRate={prices[item]?.inr}
-              shorthand={shorthands[item]}
-            />
-          )}
-        />
+        <View style={walletDashboardStyles.walletsSection}>
+          <WalletItem
+            name="Ethereum"
+            balance={balance}
+            exchangeRate={prices?.ethereum?.inr}
+            shorthand="ETH"
+          />
+          <FlatList
+            data={Object.keys(prices).filter((item) => item !== "ethereum")}
+            renderItem={({ item }) => (
+              <WalletItem
+                name={`${item[0].toUpperCase()}${item.slice(1)}`}
+                balance={0}
+                exchangeRate={prices[item]?.inr}
+                shorthand={shorthands[item]}
+              />
+            )}
+          />
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

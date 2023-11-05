@@ -17,6 +17,7 @@ import { CHAINS_CONFIG, goerli } from "../models/Chain";
 import { AccountContext } from "../context/account";
 import { geckoGetPrice } from "../api/geckoAPI";
 import ETH from "../assets/eth.svg";
+import { defaultNetworkVal } from "../constants";
 
 const estimateGas = async (addr, amt) => {
   const chain = CHAINS_CONFIG[goerli.chainId];
@@ -50,10 +51,7 @@ const MakeTransactionScreen = ({ navigation }) => {
   const [destinationAddress, setDestinationAddress] = useState("");
   const [amount, setAmount] = useState(0);
   const [gas, setGas] = useState(0);
-  const [networkResponse, setNetworkResponse] = useState({
-    status: null,
-    message: "",
-  });
+  const [networkResponse, setNetworkResponse] = useState(defaultNetworkVal);
 
   const { account } = useContext(AccountContext);
 

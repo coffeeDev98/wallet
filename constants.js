@@ -9,3 +9,8 @@ export const shorthands = {
   binancecoin: "BNB",
   // ripple: "XRP",
 };
+
+export const defaultNetworkVal = {
+  status: null,
+  message: "",
+};

@@ -32,7 +32,7 @@ export const makeTransactionStyles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 20,
     paddingHorizontal: 12,
-    marginTop: 48,
+    // marginTop: 48,
   },
 
   cancelBtn: {

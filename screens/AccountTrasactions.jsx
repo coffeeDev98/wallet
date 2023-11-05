@@ -36,7 +36,7 @@ const getTransactionsApi = async (address) => {
 };
 
 const AccountTrasactions = ({ navigation }) => {
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState();
 
   const [networkResponse, setNetworkResponse] = useState({
     status: null,
@@ -117,7 +117,7 @@ const AccountTrasactions = ({ navigation }) => {
         </Text>
       </View>
 
-      {transactions.length > 0 ? (
+      {transactions?.length >= 0 ? (
         <View>
           <FlatList
             data={transactions}

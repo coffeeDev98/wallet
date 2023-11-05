@@ -11,7 +11,7 @@ import Button from "../components/ui/Button";
 import { makeTransactionStyles } from "../stylesheets/makeTransaction";
 import { sendToken } from "../utils/transactionUtils";
 import { globalStyles } from "../stylesheets/global";
-import { typography } from "../stylesheets/constants";
+import { theme, typography } from "../stylesheets/constants";
 import { ethers } from "ethers";
 import { CHAINS_CONFIG, goerli } from "../models/Chain";
 import { AccountContext } from "../context/account";
@@ -21,6 +21,7 @@ import ETH from "../assets/eth.svg";
 const estimateGas = async (addr, amt) => {
   const chain = CHAINS_CONFIG[goerli.chainId];
   const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
+  if (!addr || !amt) return;
 
   // Create a transaction object
   const tx = {
@@ -117,11 +118,16 @@ const MakeTransactionScreen = ({ navigation }) => {
       }
     } catch (error) {
       // An error occurred while sending the transaction
-      console.error({ error });
+      console.error("transaction error : ", JSON.stringify(error));
       // Set the network response status to "error" and the message to the error
       setNetworkResponse({
         status: "error",
-        message: error.reason || JSON.stringify(error),
+        message:
+          error.code === "INVALID_ARGUMENT"
+            ? error.argument === "tx.to"
+              ? "Please enter Destination Address"
+              : "Please enter Amount"
+            : error.reason || JSON.stringify(error),
       });
     }
   };
@@ -176,6 +182,13 @@ const MakeTransactionScreen = ({ navigation }) => {
             {`\u20B9`} {gas}
           </Text>
         </View>
+        {networkResponse.status === "error" && (
+          <View>
+            <Text style={{ color: theme.colorPalette.danger[600] }}>
+              {networkResponse.message}
+            </Text>
+          </View>
+        )}
         <View style={makeTransactionStyles.buttonContainer}>
           <Button
             style={{

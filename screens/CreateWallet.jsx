@@ -12,49 +12,67 @@ import { createWalletStyles } from "../stylesheets/createWallet";
 import Button from "../components/ui/Button";
 import { globalStyles } from "../stylesheets/global";
 import { ActivityIndicator } from "react-native";
-import { typography } from "../stylesheets/constants";
+import { theme, typography } from "../stylesheets/constants";
 
+const defaultNetworkVal = {
+  status: null,
+  message: "",
+};
 const CreateWallet = ({ navigation }) => {
   const [showRecoverInput, setShowRecoverInput] = useState(false);
 
-  const [networkResponse, setNetworkResponse] = useState({
-    status: null,
-    message: "",
-  });
+  const [networkResponse, setNetworkResponse] = useState(defaultNetworkVal);
 
   const { account, setAccount, seedPhrase, setSeedPhrase } =
     useContext(AccountContext);
-
-  const recoverAccount = async () => {
-    setNetworkResponse({
-      status: "pending",
-      message: "",
-    });
-    const result = await generateAccount(seedPhrase);
-    setAccount(result.account);
-    // setShowRecoverInput(false);
-  };
-
-  const createAccount = async () => {
-    setNetworkResponse({
-      status: "pending",
-      message: "",
-    });
-    const result = await generateAccount();
-    setAccount(result.account);
-    setSeedPhrase(result.seedPhrase);
-  };
 
   useEffect(() => {
     if (account?.address) {
       setNetworkResponse({
         status: "complete",
-        message: "Transfer complete!",
+        message: "Wallet created!",
       });
       setShowRecoverInput(false);
       navigation.navigate("wallet");
     }
   }, [account]);
+
+  useEffect(() => {
+    setNetworkResponse(defaultNetworkVal);
+  }, [seedPhrase]);
+
+  const recoverAccount = async () => {
+    await setNetworkResponse({
+      status: "pending",
+      message: "",
+    });
+    try {
+      const result = await generateAccount(seedPhrase);
+      setAccount(result.account);
+    } catch (error) {
+      console.log("failed to import wallet: ", error);
+      setNetworkResponse({ status: "error", message: "Invalid Seed Phrase" });
+    }
+    // setShowRecoverInput(false);
+  };
+
+  const createAccount = async () => {
+    await setNetworkResponse({
+      status: "pending",
+      message: "",
+    });
+    try {
+      const result = await generateAccount();
+      setAccount(result.account);
+      setSeedPhrase(result.seedPhrase);
+    } catch (error) {
+      console.log("failed to create wallet: ", error);
+      setNetworkResponse({
+        status: "error",
+        message: "Failed to create wallet",
+      });
+    }
+  };
 
   return (
     <TouchableWithoutFeedback
@@ -107,7 +125,10 @@ const CreateWallet = ({ navigation }) => {
                   "Submit"
                 )
               }
-              onPress={recoverAccount}
+              onPress={() => {
+                Keyboard.dismiss();
+                recoverAccount();
+              }}
             />
             <Button
               style={globalStyles.secondaryButton}
@@ -116,6 +137,18 @@ const CreateWallet = ({ navigation }) => {
                 setShowRecoverInput(false);
               }}
             />
+            {networkResponse.status === "error" && (
+              <View
+                style={globalStyles.flexRow({
+                  width: "100%",
+                  justify: "center",
+                })}
+              >
+                <Text style={{ color: theme.colorPalette.danger[600] }}>
+                  {networkResponse.message}
+                </Text>
+              </View>
+            )}
           </View>
         ) : (
           <View style={createWalletStyles.btnContainer}>
@@ -133,6 +166,13 @@ const CreateWallet = ({ navigation }) => {
                 setShowRecoverInput((prev) => !prev);
               }}
             />
+            {networkResponse.status === "error" && (
+              <View>
+                <Text style={{ color: theme.colorPalette.danger[600] }}>
+                  {networkResponse.message}
+                </Text>
+              </View>
+            )}
           </View>
         )}
       </View>

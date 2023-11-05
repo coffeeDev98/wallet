@@ -12,28 +12,21 @@ import { useRoute } from "@react-navigation/native";
 const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
   const route = useRoute();
   return (
-    <View style={walletDashboardStyles.walletItem}>
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: 6,
-          alignItems: "center",
-        }}
-      >
+    <View
+      style={{
+        ...walletDashboardStyles.walletItem,
+        ...(route.name === "history" && { paddingLeft: 4 }),
+      }}
+    >
+      <View style={globalStyles.flexRow({ gap: 6, align: "center" })}>
         {shorthand === "ETH" && <ETH />}
         {shorthand === "BTC" && <BTC />}
         {shorthand === "BNB" && <BNB />}
         {/* {icons[name] || (
           <MaterialCommunityIcons name="ethereum" size={36} color="white" />
         )} */}
-        <View style={globalStyles.flexCol(5)}>
-          <View
-            style={{
-              ...globalStyles.flexRow(),
-              alignItems: "center",
-            }}
-          >
+        <View style={globalStyles.flexCol({ gap: 5 })}>
+          <View style={globalStyles.flexRow({ align: "center" })}>
             {route.name === "history" && (
               <MaterialCommunityIcons
                 name={
@@ -51,6 +44,10 @@ const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
                   route.name === "wallet" ? "primaryText" : "secondaryText"
                 ],
                 ...typography.h6,
+                ...(route.name === "history" && {
+                  position: "relative",
+                  left: -4,
+                }),
               }}
             >
               {name}
@@ -61,6 +58,7 @@ const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
               ...globalStyles[
                 route.name === "wallet" ? "secondaryText" : "primaryText"
               ],
+              ...(route.name === "history" && { marginLeft: 5 }),
             }}
           >
             {shorthand}
@@ -68,13 +66,11 @@ const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
         </View>
       </View>
       <View
-        style={{
-          display: "flex",
-          flexDirection: "colun",
+        style={globalStyles.flexCol({
           gap: 5,
-          alignItems: "flex-end",
-          justifyContent: "center",
-        }}
+          align: "flex-end",
+          justify: "center",
+        })}
       >
         <Text style={{ ...globalStyles.primaryText, ...typography.h6 }}>
           {balance} {route.name === "history" && shorthand}

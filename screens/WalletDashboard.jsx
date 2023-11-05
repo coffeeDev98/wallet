@@ -41,14 +41,12 @@ const WalletDashboard = ({ navigation }) => {
   return (
     <View style={walletDashboardStyles.container}>
       <View
-        style={{
-          marginBottom: 20,
+        style={globalStyles.flexRow({
           width: "100%",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
+          justify: "space-between",
+          align: "center",
+          marginBottom: 20,
+        })}
       >
         <Text
           style={{
@@ -89,7 +87,7 @@ const WalletDashboard = ({ navigation }) => {
             {balance} ETH
           </Text>
         </View>
-        <View style={{ display: "flex", flexDirection: "row", gap: 30 }}>
+        <View style={globalStyles.flexRow({ gap: 30 })}>
           <Pressable
             style={{
               ...walletDashboardStyles.sendIcon,
@@ -130,39 +128,6 @@ const WalletDashboard = ({ navigation }) => {
             />
           )}
         />
-        {/* <View style={walletDashboardStyles.walletItem}>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 6,
-              alignItems: "center",
-            }}
-          >
-            <MaterialCommunityIcons name="ethereum" size={36} color="white" />
-            <View style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <Text style={{ ...globalStyles.primaryText, ...typography.h6 }}>
-                Ethereum
-              </Text>
-              <Text style={{ ...globalStyles.secondaryText }}>ETH</Text>
-            </View>
-          </View>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "colun",
-              gap: 5,
-              alignItems: "flex-end",
-            }}
-          >
-            <Text style={{ ...globalStyles.primaryText, ...typography.h6 }}>
-              {balance}
-            </Text>
-            <Text style={{ ...globalStyles.secondaryText }}>
-              1 ETH &asymp; {`\u20B9`} {prices?.ethereum?.inr}
-            </Text>
-          </View>
-        </View> */}
       </View>
     </View>
   );

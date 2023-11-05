@@ -31,15 +31,26 @@ export const globalStyles = StyleSheet.create({
   secondaryText: {
     color: theme.colorPalette.grey[600],
   },
-  flex: {
+  flex: (props) => ({
     display: "flex",
-  },
-  flexRow: (gap) => ({
-    display: "flex",
-    ...(gap && { gap }),
+    ...props,
   }),
-  flexCol: (gap) => ({
+  flexRow: ({ gap, justify, align, width, ...others }) => ({
     display: "flex",
+    flexDirection: "row",
     ...(gap && { gap }),
+    ...(justify && { justifyContent: justify }),
+    ...(align && { alignItems: align }),
+    ...(width && { width }),
+    ...others,
+  }),
+  flexCol: ({ gap, justify, align, width, ...others }) => ({
+    display: "flex",
+    flexDirection: "column",
+    ...(gap && { gap }),
+    ...(justify && { justifyContent: justify }),
+    ...(align && { alignItems: align }),
+    ...(width && { width }),
+    ...others,
   }),
 });

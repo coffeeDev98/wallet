@@ -49,5 +49,6 @@ export const walletDashboardStyles = StyleSheet.create({
     flexDirection: "row",
     padding: 12,
     justifyContent: "space-between",
+    alignItems: "center",
   },
 });

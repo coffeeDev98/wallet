@@ -16,21 +16,16 @@ import { typography } from "../stylesheets/constants";
 
 const CreateWallet = ({ navigation }) => {
   const [showRecoverInput, setShowRecoverInput] = useState(false);
-  const [loader, setLoader] = useState({ show: false });
 
   const [networkResponse, setNetworkResponse] = useState({
     status: null,
     message: "",
   });
 
-  useEffect(() => {
-    console.log("NETWORK_RESPONSE: ", networkResponse);
-  }, [networkResponse]);
   const { account, setAccount, seedPhrase, setSeedPhrase } =
     useContext(AccountContext);
 
   const recoverAccount = async () => {
-    setLoader({ show: true });
     setNetworkResponse({
       status: "pending",
       message: "",
@@ -41,7 +36,6 @@ const CreateWallet = ({ navigation }) => {
   };
 
   const createAccount = async () => {
-    setLoader({ show: true });
     setNetworkResponse({
       status: "pending",
       message: "",
@@ -53,7 +47,6 @@ const CreateWallet = ({ navigation }) => {
 
   useEffect(() => {
     if (account?.address) {
-      setLoader({ show: false });
       setNetworkResponse({
         status: "complete",
         message: "Transfer complete!",

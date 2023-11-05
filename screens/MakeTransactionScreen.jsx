@@ -20,8 +20,6 @@ import ETH from "../assets/eth.svg";
 
 const estimateGas = async (addr, amt) => {
   const chain = CHAINS_CONFIG[goerli.chainId];
-
-  // Create a provider using the Infura RPC URL for Goerli
   const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
 
   // Create a transaction object
@@ -38,9 +36,7 @@ const estimateGas = async (addr, amt) => {
       return provider.getGasPrice().then(async (gasPrice) => {
         const gasFee = estimatedGasLimit.mul(gasPrice);
         const gasFeeinETH = ethers.utils.formatEther(gasFee);
-        console.log("Estimated Gas Fee:", gasFeeinETH, "ETH");
         const rate = await geckoGetPrice("ethereum");
-        console.log("Rate: ", rate);
         return (gasFeeinETH * rate.ethereum.inr).toFixed(2);
       });
     })
@@ -70,11 +66,10 @@ const MakeTransactionScreen = ({ navigation }) => {
     if (destinationAddress && amount) {
       estimateGas(destinationAddress, amount)
         .then((g) => {
-          console.log("GAS FEE: ", g);
           setGas(g);
         })
         .catch((err) => {
-          console.log("GAS_ESTIMATE_ERR: ", err);
+          console.log("gas_estimate_err: ", err);
         });
     }
   }, [destinationAddress, amount]);
@@ -84,9 +79,6 @@ const MakeTransactionScreen = ({ navigation }) => {
   };
 
   const handleAmountChange = (val) => {
-    // const regex = /^(0|[1-9]\d*)\.?\d{0,5}$/;
-    // if (!regex.test(val)) return;
-
     setAmount(val);
   };
 
@@ -175,11 +167,7 @@ const MakeTransactionScreen = ({ navigation }) => {
           onChangeText={(val) => val !== NaN && handleAmountChange(val)}
         />
         <View
-          style={{
-            ...globalStyles.flexRow,
-            width: "100%",
-            justifyContent: "flex-start",
-          }}
+          style={globalStyles.flexCol({ width: "100%", justify: "flex-start" })}
         >
           <Text style={{ ...globalStyles.secondaryText, ...typography.text2 }}>
             Estimated fee

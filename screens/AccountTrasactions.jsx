@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
@@ -11,7 +10,6 @@ import {
 import { TRANSACTION_API_KEY, TRANSACTION_API_URL } from "../constants";
 import { goerli } from "../models/Chain";
 import axios from "axios";
-import { shortenAddress } from "../utils/accountUtils";
 import { ethers } from "ethers";
 import { globalStyles } from "../stylesheets/global";
 import { typography } from "../stylesheets/constants";
@@ -73,7 +71,7 @@ const AccountTrasactions = ({ navigation }) => {
           ]);
         })
         .catch((error) => {
-          console.log("ERR: ", error);
+          console.log("get_transactions_error: ", error);
           setNetworkResponse({
             status: "error",
             message: JSON.stringify(error),
@@ -93,15 +91,13 @@ const AccountTrasactions = ({ navigation }) => {
   return (
     <View style={accountTransactionsStyles.container}>
       <View
-        style={{
+        style={globalStyles.flexRow({
           width: "100%",
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "flex-start",
-          gap: 30,
-          marginBottom: 20,
-        }}
+          justify: "flex-start",
+          align: "center",
+          gap: 28,
+          marginBottom: 10,
+        })}
       >
         <Pressable
           onPress={() => {
@@ -138,7 +134,11 @@ const AccountTrasactions = ({ navigation }) => {
         </View>
       ) : (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={globalStyles.flex({
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          })}
         >
           <ActivityIndicator size="large" />
         </View>
@@ -148,27 +148,3 @@ const AccountTrasactions = ({ navigation }) => {
 };
 
 export default AccountTrasactions;
-
-const styles = StyleSheet.create({
-  container: {
-    // width: "50%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    // alignSelf: "stretch",
-  },
-  header: {
-    marginBottom: 10,
-  },
-  table: {
-    flex: 1,
-    flexDirection: "column",
-    alignSelf: "stretch",
-  },
-  row: {
-    flex: 1,
-    flexDirection: "row",
-    alignSelf: "stretch",
-    gap: 30,
-  },
-});

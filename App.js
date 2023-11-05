@@ -1,5 +1,6 @@
 import "react-native-gesture-handler";
 import "react-native-get-random-values";
+import crypto from "crypto-js";
 import "@ethersproject/shims";
 import { useState } from "react";
 import { View, TouchableWithoutFeedback, Keyboard } from "react-native";

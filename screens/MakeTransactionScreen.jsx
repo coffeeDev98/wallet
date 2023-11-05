@@ -84,7 +84,6 @@ const MakeTransactionScreen = ({ navigation }) => {
   };
 
   const transfer = async () => {
-    // Set the network response status to "pending"
     setNetworkResponse({
       status: "pending",
       message: "",
@@ -100,14 +99,12 @@ const MakeTransactionScreen = ({ navigation }) => {
         );
 
         if (receipt.status === 1) {
-          // Set the network response status to "complete" and the message to the transaction hash
           setNetworkResponse({
             status: "complete",
             message: "Transfer complete!",
           });
           return receipt;
         } else {
-          // Transaction failed
           console.log(`Failed to send ${receipt}`);
           setNetworkResponse({
             status: "error",
@@ -117,9 +114,7 @@ const MakeTransactionScreen = ({ navigation }) => {
         }
       }
     } catch (error) {
-      // An error occurred while sending the transaction
       console.error("transaction error : ", JSON.stringify(error));
-      // Set the network response status to "error" and the message to the error
       setNetworkResponse({
         status: "error",
         message:
@@ -217,7 +212,6 @@ const MakeTransactionScreen = ({ navigation }) => {
         </View>
       </View>
     </TouchableWithoutFeedback>
-    //   <AccountTrasactions account={account} />
   );
 };
 

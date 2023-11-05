@@ -8,6 +8,5 @@ export const appStyles = StyleSheet.create({
     paddingVertical: 38,
     paddingHorizontal: 12,
     backgroundColor: theme.colorPalette.grey[0],
-    ...typography.global,
   },
 });

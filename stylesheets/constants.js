@@ -82,9 +82,7 @@ export const theme = {
 };
 
 export const typography = {
-  global: {
-    // fontFamily: "Roboto",
-  },
+  global: {},
   weight: {
     bold: { fontWeight: 700 },
     medium: { fontWeight: 500 },

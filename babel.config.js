@@ -1,14 +1,12 @@
 module.exports = (api) => {
   api.cache(true);
   return {
-    presets: ["module:metro-react-native-babel-preset"], //["babel-preset-expo"],
-    // plugins: ["@babel/plugin-transform-private-methods"],
+    presets: ["module:metro-react-native-babel-preset"],
     plugins: [
       [
         "module-resolver",
         {
           alias: {
-            // crypto: "react-native-quick-crypto",
             stream: "stream-browserify",
             buffer: "@craftzdog/react-native-buffer",
           },

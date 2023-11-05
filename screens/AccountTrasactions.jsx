@@ -6,7 +6,6 @@ import {
   Text,
   View,
 } from "react-native";
-// import { TransactionService } from "../service/transactionService";
 import { TRANSACTION_API_KEY, TRANSACTION_API_URL } from "../constants";
 import { goerli } from "../models/Chain";
 import axios from "axios";
@@ -30,7 +29,6 @@ const getTransactionsApi = async (address) => {
     },
   };
 
-  //   const response = await fetch(`${TRANSACTION_API_URL}/${address}`, options);
   const response = await axios(options);
   return response.data;
 };

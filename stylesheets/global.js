@@ -7,11 +7,8 @@ export const globalStyles = StyleSheet.create({
       backgroundColor: theme.colorPalette.primary[700],
       borderRadius: 8,
       width: "100%",
-      ...typography.global,
     },
-    text: {
-      ...typography.global,
-    },
+    text: {},
   },
   secondaryButton: {
     button: {
@@ -21,9 +18,7 @@ export const globalStyles = StyleSheet.create({
       borderColor: "#fff",
       backgroundColor: theme.colorPalette.grey[0],
     },
-    text: {
-      ...typography.global,
-    },
+    text: {},
   },
   primaryText: {
     color: "#fff",

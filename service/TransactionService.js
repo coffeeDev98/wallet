@@ -9,7 +9,6 @@ export class TransactionService {
   static async getTransactions(address) {
     const options = {
       method: "GET",
-      //   url: `${TransactionService.API_URL}/${address}`,
       params: { chain: goerli.name.toLowerCase() },
       headers: {
         Accept: "application/json",

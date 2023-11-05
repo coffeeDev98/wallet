@@ -60,7 +60,6 @@ const CreateWallet = ({ navigation }) => {
       setNetworkResponse({ status: "error", message: "Invalid Seed Phrase" });
       setAccountCreationMode("");
     }
-    // setShowRecoverInput(false);
   };
 
   const createAccount = async () => {

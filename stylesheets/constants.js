@@ -82,7 +82,6 @@ export const theme = {
 };
 
 export const typography = {
-  global: {},
   weight: {
     bold: { fontWeight: 700 },
     medium: { fontWeight: 500 },

@@ -25,7 +25,7 @@ const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
         {/* {icons[name] || (
           <MaterialCommunityIcons name="ethereum" size={36} color="white" />
         )} */}
-        <View style={globalStyles.flexCol({ gap: 5 })}>
+        <View style={globalStyles.flexCol({})}>
           <View style={globalStyles.flexRow({ align: "center" })}>
             {route.name === "history" && (
               <MaterialCommunityIcons
@@ -58,7 +58,11 @@ const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
               ...globalStyles[
                 route.name === "wallet" ? "secondaryText" : "primaryText"
               ],
-              ...(route.name === "history" && { marginLeft: 5 }),
+
+              ...(route.name === "history" && {
+                ...typography.weight.medium,
+                marginLeft: 5,
+              }),
             }}
           >
             {shorthand}
@@ -72,7 +76,15 @@ const WalletItem = ({ name, exchangeRate, balance, shorthand = "" }) => {
           justify: "center",
         })}
       >
-        <Text style={{ ...globalStyles.primaryText, ...typography.h6 }}>
+        <Text
+          style={{
+            ...globalStyles.primaryText,
+            ...typography.h6,
+            ...(route.name === "history" && {
+              ...typography.weight.bold,
+            }),
+          }}
+        >
           {balance} {route.name === "history" && shorthand}
         </Text>
         {route.name === "wallet" && (

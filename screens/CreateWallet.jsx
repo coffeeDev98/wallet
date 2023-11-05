@@ -20,8 +20,8 @@ const defaultNetworkVal = {
 };
 const CreateWallet = ({ navigation }) => {
   const [showRecoverInput, setShowRecoverInput] = useState(false);
-
   const [networkResponse, setNetworkResponse] = useState(defaultNetworkVal);
+  const [accountCreationMode, setAccountCreationMode] = useState("");
 
   const { account, setAccount, seedPhrase, setSeedPhrase } =
     useContext(AccountContext);
@@ -32,6 +32,7 @@ const CreateWallet = ({ navigation }) => {
         status: "complete",
         message: "Wallet created!",
       });
+      setAccountCreationMode("");
       setShowRecoverInput(false);
       navigation.navigate("wallet");
     }
@@ -41,26 +42,28 @@ const CreateWallet = ({ navigation }) => {
     setNetworkResponse(defaultNetworkVal);
   }, [seedPhrase]);
 
+  useEffect(() => {
+    accountCreationMode === "recover" && recoverAccount();
+    accountCreationMode === "create" && createAccount();
+  }, [accountCreationMode]);
+
   const recoverAccount = async () => {
-    await setNetworkResponse({
-      status: "pending",
-      message: "",
-    });
     try {
-      const result = await generateAccount(seedPhrase);
-      setAccount(result.account);
+      if (seedPhrase.includes(" ")) {
+        const result = await generateAccount(seedPhrase);
+        setAccount(result.account);
+      } else {
+        throw new Error("Invalid Seed Phare");
+      }
     } catch (error) {
       console.log("failed to import wallet: ", error);
       setNetworkResponse({ status: "error", message: "Invalid Seed Phrase" });
+      setAccountCreationMode("");
     }
     // setShowRecoverInput(false);
   };
 
   const createAccount = async () => {
-    await setNetworkResponse({
-      status: "pending",
-      message: "",
-    });
     try {
       const result = await generateAccount();
       setAccount(result.account);
@@ -71,6 +74,7 @@ const CreateWallet = ({ navigation }) => {
         status: "error",
         message: "Failed to create wallet",
       });
+      setAccountCreationMode("");
     }
   };
 
@@ -119,15 +123,11 @@ const CreateWallet = ({ navigation }) => {
             <Button
               style={globalStyles.primaryButton}
               title={
-                networkResponse.status === "pending" ? (
-                  <ActivityIndicator />
-                ) : (
-                  "Submit"
-                )
+                accountCreationMode !== "" ? <ActivityIndicator /> : "Submit"
               }
               onPress={() => {
                 Keyboard.dismiss();
-                recoverAccount();
+                setAccountCreationMode("recover");
               }}
             />
             <Button
@@ -154,9 +154,15 @@ const CreateWallet = ({ navigation }) => {
           <View style={createWalletStyles.btnContainer}>
             <Button
               style={globalStyles.primaryButton}
-              title="Generate Account"
+              title={
+                accountCreationMode !== "" ? (
+                  <ActivityIndicator />
+                ) : (
+                  "Generate Account"
+                )
+              }
               onPress={() => {
-                createAccount();
+                setAccountCreationMode("create");
               }}
             />
             <Button

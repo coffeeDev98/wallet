@@ -95,7 +95,7 @@ const AccountTrasactions = ({ navigation }) => {
           width: "100%",
           justify: "flex-start",
           align: "center",
-          gap: 28,
+          gap: 24,
           marginBottom: 10,
         })}
       >
@@ -109,7 +109,7 @@ const AccountTrasactions = ({ navigation }) => {
         <Text
           style={{
             ...globalStyles.primaryText,
-            ...typography.h4,
+            ...typography.h3,
             ...typography.weight.bold,
           }}
         >
